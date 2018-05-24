@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -18,7 +17,5 @@ func setupRouteToTrips(trips []*gtfs.Trip) map[string][]*gtfs.Trip {
 
 func (s *MetroService) getTrips(w http.ResponseWriter, r *http.Request) {
 	routeID := chi.URLParam(r, "routeID")
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(s.routeToTripsMap[routeID])
+	render.JSON(w, http.StatusOK, s.routeToTripsMap[routeID])
 }

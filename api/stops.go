@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -19,8 +18,6 @@ func setupStops(stops []*gtfs.Stop) *trie.Trie {
 
 func (s *MetroService) getStops(w http.ResponseWriter, r *http.Request) {
 	qArgs := r.URL.Query()
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	keys := s.stops.FuzzySearch(strings.ToLower(qArgs.Get("name")))
 	stops := []*gtfs.Stop{}
 	for _, key := range keys {
@@ -29,5 +26,5 @@ func (s *MetroService) getStops(w http.ResponseWriter, r *http.Request) {
 			stops = append(stops, stop)
 		}
 	}
-	json.NewEncoder(w).Encode(stops)
+	render.JSON(w, http.StatusOK, stops)
 }
