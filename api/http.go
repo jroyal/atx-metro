@@ -9,3 +9,7 @@ var render = unrolledRender.New(
 		IndentJSON: true,
 	},
 )
+
+type ApiError struct {
+	Err string `json:"error"`
+}

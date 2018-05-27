@@ -18,7 +18,12 @@ func setupStops(stops []*gtfs.Stop) *trie.Trie {
 
 func (s *MetroService) getStops(w http.ResponseWriter, r *http.Request) {
 	qArgs := r.URL.Query()
-	keys := s.stops.FuzzySearch(strings.ToLower(qArgs.Get("name")))
+	nameFilter := strings.ToLower(qArgs.Get("name"))
+	if nameFilter == "" {
+		render.JSON(w, http.StatusBadRequest, ApiError{"name is required"})
+		return
+	}
+	keys := s.stops.FuzzySearch(nameFilter)
 	stops := []*gtfs.Stop{}
 	for _, key := range keys {
 		if node, ok := s.stops.Find(key); ok {
