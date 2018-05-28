@@ -13,7 +13,10 @@ type MetroService struct {
 	Handler http.Handler
 	feed    gtfs.Feed
 
-	routeMap        map[string]*gtfs.Route
+	routeMap    map[string]*gtfs.Route
+	tripMap     map[string]*gtfs.Trip
+	stoptimeMap map[string][]*gtfs.StopTimes
+
 	routeToTripsMap map[string][]*gtfs.Trip
 	stops           *trie.Trie
 }
@@ -27,9 +30,11 @@ func NewService(config *MetroServiceConfig) *MetroService {
 	service := &MetroService{
 		feed:            feed,
 		routeMap:        setupRoutes(feed.Routes),
+		tripMap:         setupTrips(feed.Trips),
+		stoptimeMap:     setupStopTimes(feed.StopTimes),
 		routeToTripsMap: setupRouteToTrips(feed.Trips),
-		stops:           setupStops(feed.Stops),
 	}
+	service.stops = setupStops(feed.Stops, service.tripMap, service.stoptimeMap)
 	api := chi.NewRouter()
 	api.Get("/agency", service.getAgency)
 	api.Get("/routes", service.getRoutes)

@@ -15,6 +15,18 @@ func setupRouteToTrips(trips []*gtfs.Trip) map[string][]*gtfs.Trip {
 	return tripMap
 }
 
+func setupTrips(trips []*gtfs.Trip) map[string]*gtfs.Trip {
+	tripMap := make(map[string]*gtfs.Trip)
+	for _, trip := range trips {
+		tripMap[trip.ID] = trip
+	}
+	return tripMap
+}
+
+func setupStopToRoutes() {
+
+}
+
 func (s *MetroService) getTrips(w http.ResponseWriter, r *http.Request) {
 	routeID := chi.URLParam(r, "routeID")
 	render.JSON(w, http.StatusOK, s.routeToTripsMap[routeID])

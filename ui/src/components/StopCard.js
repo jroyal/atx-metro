@@ -24,7 +24,13 @@ class StopCard extends Component {
         <div className="card-body">
           <h5 className="card-title">{stop.Name}</h5>
           <h6 className="card-subtitle mb-2 text-muted">Stop ID: {stop.ID}</h6>
-          <p className="card-text">{stop.Desc}</p>
+          <p className="card-text mb-0">{stop.Desc}</p>
+          <div className="d-block mb-3">
+            {stop.Routes.map(route => (
+              <span class="badge badge-pill badge-info mr-1">{route}</span>
+            ))}
+          </div>
+
           <div
             className="btn-toolbar d-inline-block center-block"
             role="toolbar"

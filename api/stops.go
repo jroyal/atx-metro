@@ -8,10 +8,32 @@ import (
 	"github.com/jroyal/gtfs"
 )
 
-func setupStops(stops []*gtfs.Stop) *trie.Trie {
+type ExpandedStop struct {
+	*gtfs.Stop
+	Routes []string
+}
+
+func setupStopTimes(stopTimes []*gtfs.StopTimes) map[string][]*gtfs.StopTimes {
+	stoptimeMap := make(map[string][]*gtfs.StopTimes)
+	for _, stopTime := range stopTimes {
+		stoptimeMap[stopTime.StopID] = append(stoptimeMap[stopTime.StopID], stopTime)
+	}
+	return stoptimeMap
+}
+
+func setupStops(stops []*gtfs.Stop, trips map[string]*gtfs.Trip, stopTimes map[string][]*gtfs.StopTimes) *trie.Trie {
 	t := trie.New()
 	for _, stop := range stops {
-		t.Add(strings.ToLower(stop.Name), stop)
+		times := stopTimes[stop.ID]
+		routeMap := map[string]bool{}
+		for _, time := range times {
+			routeMap[trips[time.TripID].RouteID] = true
+		}
+		routes := []string{}
+		for k := range routeMap {
+			routes = append(routes, k)
+		}
+		t.Add(strings.ToLower(stop.Name), ExpandedStop{stop, routes})
 	}
 	return t
 }
@@ -24,10 +46,10 @@ func (s *MetroService) getStops(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	keys := s.stops.FuzzySearch(nameFilter)
-	stops := []*gtfs.Stop{}
+	stops := []ExpandedStop{}
 	for _, key := range keys {
 		if node, ok := s.stops.Find(key); ok {
-			stop := node.Meta().(*gtfs.Stop)
+			stop := node.Meta().(ExpandedStop)
 			stops = append(stops, stop)
 		}
 	}
