@@ -17,24 +17,35 @@ class StopCard extends Component {
   };
 
   render() {
-    const { apiKey, stop } = this.props;
+    const { stop } = this.props;
     const { showMap } = this.state;
-    console.log(stop);
     return (
-      <div className="card">
+      <div className="card mb-4 ml-4 mr-4">
         <div className="card-body">
           <h5 className="card-title">{stop.Name}</h5>
           <h6 className="card-subtitle mb-2 text-muted">Stop ID: {stop.ID}</h6>
           <p className="card-text">{stop.Desc}</p>
-          <button onClick={this.onClick} className="btn btn-primary">
-            Show on map
-          </button>
+          <div
+            className="btn-toolbar d-inline-block center-block"
+            role="toolbar"
+          >
+            <a
+              href={stop.URL}
+              target="_blank"
+              className="btn btn-outline-info btn-sm mr-2"
+            >
+              Stop Page
+            </a>
+
+            <button
+              onClick={this.onClick}
+              className="btn btn-outline-primary btn-sm"
+            >
+              Show on map
+            </button>
+          </div>
           {showMap && (
-            <GoogleMap
-              apiKey={apiKey}
-              latitude={stop.Latitude}
-              longitude={stop.Longitude}
-            />
+            <GoogleMap latitude={stop.Latitude} longitude={stop.Longitude} />
           )}
         </div>
       </div>
@@ -43,8 +54,7 @@ class StopCard extends Component {
 }
 
 StopCard.propTypes = {
-  stop: PropTypes.object,
-  apiKey: PropTypes.string
+  stop: PropTypes.object
 };
 
 export default StopCard;

@@ -4,7 +4,7 @@ import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class GoogleMap extends Component {
   render() {
-    const { apiKey, latitude, longitude } = this.props;
+    const { latitude, longitude } = this.props;
     return (
       <iframe
         width="100%"
@@ -25,7 +25,6 @@ class GoogleMap extends Component {
 }
 GoogleMap.propTypes = {
   latitude: PropTypes.string,
-  longitude: PropTypes.string,
-  apiKey: PropTypes.string
+  longitude: PropTypes.string
 };
 export default GoogleMap;

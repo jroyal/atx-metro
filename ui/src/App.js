@@ -7,6 +7,7 @@ import { debounce } from "underscore";
 import "./components/StopSearchBar";
 import StopSearchBar from "./components/StopSearchBar";
 import StopCard from "./components/StopCard";
+import StopCardDeck from "./components/StopCardDeck";
 
 class App extends Component {
   constructor(props) {
@@ -22,12 +23,21 @@ class App extends Component {
 
   searchStops = debounce(name => {
     fetch("api/stops?name=" + name)
-      .then(result => result.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
       .then(data => {
-        // TODO: Handle error
         if (Array.isArray(data)) {
           this.setState({ possibleStops: data });
         }
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({ possibleStops: [] });
       });
   }, 500);
 
@@ -56,12 +66,8 @@ class App extends Component {
               <StopSearchBar onChange={this.onChange} value={stop} />
             </div>
           </div>
-          <div className="row justify-content-center timeConverter">
-            <div className="col-6">
-              {possibleStops.map(stop => {
-                return <StopCard apiKey={apiKey} stop={stop} />;
-              })}
-            </div>
+          <div className="row">
+            <StopCardDeck stops={possibleStops} />
           </div>
         </div>
       </div>
